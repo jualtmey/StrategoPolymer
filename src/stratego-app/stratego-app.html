@@ -1,0 +1,31 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="stratego-field.html">
+
+<dom-module id="stratego-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <h2>Hello [[prop1]]</h2>
+    <stratego-field></stratego-field>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'stratego-app',
+
+      properties: {
+        prop1: {
+          type: String,
+          value: 'stratego-app',
+        },
+      },
+
+    });
+  </script>
+</dom-module>
