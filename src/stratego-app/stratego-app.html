@@ -1,16 +1,35 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="stratego-select.html">
 <link rel="import" href="stratego-field.html">
+<link rel="import" href="stratego-input-handler.html">
+<link rel="import" href="stratego-websocket.html">
 
 <dom-module id="stratego-app">
   <template>
-    <style>
-      :host {
-        display: block;
+    <style is="custom-style">
+      paper-toolbar.green {
+        --paper-toolbar-background: #006f01;
+        --paper-toolbar-title: {
+          font-weight: bold;
+        };
       }
+
     </style>
 
-    <h2>Hello [[prop1]]</h2>
-    <stratego-field></stratego-field>
+    <paper-toolbar class="green">
+      <paper-icon-button icon="menu"></paper-icon-button>
+      <span class="title">Stratego</span>
+    </paper-toolbar>
+
+    <stratego-select character-list="{{selectJson.characterList}}"></stratego-select>
+    <br>
+    <paper-button raised on-tap="finish">Fertig!</paper-button>
+    <stratego-field inner-field='{{fieldJson.innerField}}'></stratego-field>
+    <stratego-input-handler websocket="{{websocket}}" state="{{strategoJson.state}}"></stratego-input-handler>
+    <stratego-websocket url="ws://localhost:9000/ws"></stratego-websocket>
 
   </template>
 
@@ -20,11 +39,41 @@
       is: 'stratego-app',
 
       properties: {
-        prop1: {
-          type: String,
-          value: 'stratego-app',
-        },
+
+          websocket: Object,
+          inputHandler: Object,
+
+          strategoJson: Object,
+          selectJson: Object,
+          fieldJson: Object,
+          infoJson: Object,
+
       },
+
+      ready: function () {
+          this.websocket = document.querySelector('stratego-websocket');
+
+          this.inputHandler = document.querySelector('stratego-input-handler');
+          this.addEventListener('field-click', function (e) {
+              this.inputHandler.onFieldClicked(e.detail);
+          });
+
+          this.addEventListener('select-click', function (e) {
+              this.inputHandler.onSelectClicked(e.detail);
+          });
+
+          this.addEventListener('websocket-onmessage', function (e) {
+              this.strategoJson = JSON.parse(e.detail);
+              this.selectJson = this.strategoJson.select;
+              this.fieldJson = this.strategoJson.field;
+              this.infoJson = this.strategoJson.info;
+              console.log(this.strategoJson); // TODO: test
+          });
+      },
+
+      finish: function() {
+          this.inputHandler.finish();
+      }
 
     });
   </script>

@@ -1,0 +1,43 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="stratego-websocket">
+    <template>
+        <style>
+            :host {
+                display: none;
+            }
+        </style>
+    </template>
+
+    <script>
+        Polymer({
+            is: "stratego-websocket",
+            socket: null,
+            properties: {
+                url: {
+                    type: String
+                }
+            },
+            ready: function () {
+                this.socket = new WebSocket(this.url);
+                this.socket.onerror = this.onError.bind(this);
+                this.socket.onopen = this.onOpen.bind(this);
+                this.socket.onmessage = this.onMessage.bind(this);
+            },
+            onError: function (error) {
+                alert("Websocket Error!");
+            },
+            onOpen: function (event) {
+                alert("Connected");
+                var json = {'command': "lobby"};
+                this.socket.send(JSON.stringify(json));
+            },
+            onMessage: function (event) {
+                this.fire('websocket-onmessage', event.data);
+            },
+            send: function (message) {
+                this.socket.send(message);
+            }
+        });
+    </script>
+</dom-module>

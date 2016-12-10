@@ -1,0 +1,30 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="stratego-select-cell.html">
+
+<dom-module id="stratego-select">
+    <template>
+        <style>
+            :host {
+
+            }
+
+        </style>
+
+        <template is="dom-repeat" items="{{characterList}}">
+            <stratego-select-cell character="{{item}}"></stratego-select-cell>
+        </template>
+
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'stratego-select',
+
+            properties: {
+                characterList: Array
+            }
+
+        });
+    </script>
+</dom-module>

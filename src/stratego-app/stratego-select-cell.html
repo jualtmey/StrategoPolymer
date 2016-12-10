@@ -1,0 +1,57 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="stratego-select-cell">
+    <template>
+        <style>
+            :host {
+                display: table-cell;
+                font-size: 0px;
+                border: 1px solid rgb(57,128,57);
+                width: 80px;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+            }
+
+            :host:hover {
+                filter: grayscale(0.5);
+                background-color: rgba(115, 115, 115, 0.3);
+            }
+
+            :host:active{
+                filter:grayscale(1) brightness(3.5);
+            }
+
+            .figure {
+                border-radius: 1.0em;
+                width: 100%;
+            }
+
+        </style>
+
+        <img class="figure" src="../../res/img/{{character.rank}}.svg">
+
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'stratego-select-cell',
+
+            properties: {
+
+                character: Object
+
+            },
+
+            listeners: {
+                'tap': 'onTap'
+            },
+
+            onTap: function() {
+                this.fire('select-click', this.character);
+            }
+
+        });
+    </script>
+</dom-module>

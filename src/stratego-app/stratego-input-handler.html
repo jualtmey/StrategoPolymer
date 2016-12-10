@@ -1,0 +1,115 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="stratego-input-handler">
+    <template>
+        <style>
+            :host {
+                display: none;
+            }
+        </style>
+
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'stratego-input-handler',
+
+            lastClickedFieldCell: null,
+            lastSelectedCharacter: null,
+
+            properties: {
+                websocket: Object,
+                state: String
+            },
+
+            listeners: {
+              'tap': 'onTap'
+            },
+
+            ready: function() {
+                console.log(this.websocket);
+            },
+
+            onSelectClicked: function(character) {
+                if (this.lastClickedFieldCell != null) {
+                    this.remove(this.lastClickedFieldCell.row, this.lastClickedFieldCell.column);
+                    this.lastClickedFieldCell = null;
+                } else {
+                    this.lastSelectedCharacter = character;
+                }
+            },
+
+            onFieldClicked: function(cell) {
+                if (this.state === "start") {
+                    if (this.lastSelectedCharacter != null) {
+                        this.add(cell.row, cell.column, this.lastSelectedCharacter.rank);
+                        this.lastSelectedCharacter = null;
+                    } else if (this.lastClickedFieldCell != null) {
+                        this.swap(this.lastClickedFieldCell.row, this.lastClickedFieldCell.column, cell.row, cell.column)
+                        this.lastClickedFieldCell = null;
+                    } else {
+                        this.lastClickedFieldCell = cell;
+                    }
+                } else if (this.state === "turn") {
+                    if (this.lastClickedFieldCell != null) {
+                        this.move(this.lastClickedFieldCell.row, this.lastClickedFieldCell.column, cell.row, cell.column);
+                        this.lastClickedFieldCell = null;
+                    } else {
+                        this.lastClickedFieldCell = cell;
+                    }
+                }
+            },
+
+            add: function(row, column, rank) {
+                var json = {
+                    'command': "add",
+                    'row': row,
+                    'column': column,
+                    'rank': rank
+                };
+                this.websocket.send(JSON.stringify(json));
+            },
+
+            swap: function(fromRow, fromColumn, toRow, toColumn) {
+                var json = {
+                    'command': "swap",
+                    'fromRow': fromRow,
+                    'fromColumn': fromColumn,
+                    'toRow': toRow,
+                    'toColumn': toColumn
+                };
+                this.websocket.send(JSON.stringify(json));
+            },
+
+            remove: function(row, column) {
+                var json = {
+                    'command': "remove",
+                    'row': row,
+                    'column': column,
+                };
+                this.websocket.send(JSON.stringify(json));
+            },
+
+            move: function(fromRow, fromColumn, toRow, toColumn) {
+                var json = {
+                    'command': "move",
+                    'fromRow': fromRow,
+                    'fromColumn': fromColumn,
+                    'toRow': toRow,
+                    'toColumn': toColumn
+                };
+                this.websocket.send(JSON.stringify(json));
+            },
+
+            finish: function() {
+                var json = {
+                    'command': "finish",
+                };
+                this.websocket.send(JSON.stringify(json));
+            }
+
+        });
+
+    </script>
+</dom-module>

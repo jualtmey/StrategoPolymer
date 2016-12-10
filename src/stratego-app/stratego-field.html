@@ -5,12 +5,29 @@
     <template>
         <style>
             :host {
-                display: block;
+                /*font-size: 0px;*/
             }
+
+            .container {
+                display: table;
+                border-collapse: collapse;
+            }
+
+            .row {
+                display: table-row;
+            }
+
         </style>
 
-        <p>Stratego Field</p>
-        <stratego-cell></stratego-cell>
+        <div class="container">
+            <template is="dom-repeat" items="{{innerField}}">
+                <div class="row">
+                    <template is="dom-repeat" items="{{item.cells}}">
+                        <stratego-cell cell="{{item}}" noborder$="{{!item.isPassable}}"></stratego-cell>
+                    </template>
+                </div>
+            </template>
+        </div>
 
     </template>
 
@@ -20,12 +37,10 @@
             is: 'stratego-field',
 
             properties: {
-                prop1: {
-                    type: String,
-                    value: 'stratego-field',
-                },
+                innerField: Array,
             },
 
         });
+
     </script>
 </dom-module>

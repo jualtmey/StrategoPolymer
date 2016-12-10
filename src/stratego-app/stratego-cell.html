@@ -4,11 +4,54 @@
     <template>
         <style>
             :host {
-                display: block;
+                display: table-cell;
+                font-size: 0px;
+                border: 1px solid rgb(57,128,57);
+                width: 80px;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
             }
+
+            :host:hover {
+                filter: grayscale(0.5);
+                background-color: rgba(115, 115, 115, 0.3);
+            }
+
+            :host:active{
+                filter:grayscale(1) brightness(3.5);
+            }
+
+            :host[noborder] {
+                border-style: none;
+            }
+
+            .selected {
+                filter:grayscale(1) brightness(2.5);
+            }
+
+            .selected:hover {
+                filter:grayscale(1) brightness(2.5);
+            }
+
+            .figure {
+                border-radius: 15px;
+                width: 100%;
+            }
+
+            .playerOne {
+                background: rgba(255, 33, 45, 0.40);
+                border: 1px solid rgba(139, 5, 5, 0.80);
+            }
+
+            .playerTwo {
+                background: rgba(61, 119, 255, 0.4);
+                border: 1px solid rgba(19, 44, 139, 0.8);
+            }
+
         </style>
 
-        <p>cell</p>
+        <img class$="figure {{playerColor}}" src="../../res/img/{{characterName}}.svg">
 
     </template>
 
@@ -18,12 +61,55 @@
             is: 'stratego-cell',
 
             properties: {
-                prop1: {
+                cell: Object,
+
+                characterName: {
                     type: String,
-                    value: 'stratego-cell',
+                    value: "empty",
+                    computed: 'computeCharacterName(cell)'
                 },
+
+                playerColor: {
+                    type: String,
+                    value: "",
+                    computed: 'computePlayerColor(cell)'
+                }
+
             },
 
+            listeners: {
+                'tap': 'onTap'
+            },
+
+            onTap: function() {
+                this.fire('field-click',this.cell);
+            },
+
+            computeCharacterName: function(cell) {
+                if (cell.containsCharacter) {
+                    if (cell.character.isVisible) {
+                        return cell.character.rank.toString();
+                    } else {
+                        return "notVisible";
+                    }
+                } else {
+                    return "empty";
+                }
+            },
+
+            computePlayerColor: function(cell) {
+                if (cell.containsCharacter) {
+                    if (cell.character.isVisible) {
+                        return "playerOne";
+                    } else {
+                        return "playerTwo";
+                    }
+                } else {
+                    return "";
+                }
+            }
+
         });
+
     </script>
 </dom-module>
